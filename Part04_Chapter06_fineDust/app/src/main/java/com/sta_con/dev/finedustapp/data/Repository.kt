@@ -1,6 +1,7 @@
 package com.sta_con.dev.finedustapp.data
 
 import com.sta_con.dev.finedustapp.BuildConfig
+import com.sta_con.dev.finedustapp.data.models.airquality.MeasuredValue
 import com.sta_con.dev.finedustapp.data.models.monitoringStation.MonitoringStation
 import com.sta_con.dev.finedustapp.data.services.AirKoreaApiService
 import com.sta_con.dev.finedustapp.data.services.KakaoLocationApiService
@@ -29,6 +30,15 @@ object Repository {
             ?.monitoringStations
             ?.minByOrNull { it.tm ?: Double.MAX_VALUE }
     }
+
+    suspend fun getLatestAirQualityData(stationName: String): MeasuredValue? =
+        airKoreaApiService
+            .getRealtimeAirQualities(stationName)
+            .body()
+            ?.response
+            ?.body
+            ?.measuredValues
+            ?.firstOrNull()
 
     private val kakaoLocationApiService: KakaoLocationApiService by lazy {
         Retrofit.Builder()
